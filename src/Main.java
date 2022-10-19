@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,9 +23,16 @@ public class Main {
                 browsers.add(myProcess);
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            browsers.get(0).waitFor(500, TimeUnit.MILLISECONDS);
 
+            for (int i = 0; i < browsers.size(); i++) {
+                Process process = browsers.get(i);
+                process.destroyForcibly();
+                System.out.println("Finished process " + i + " : " + LocalTime.now());
+            }
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println(e);
+        }
     }
 }
